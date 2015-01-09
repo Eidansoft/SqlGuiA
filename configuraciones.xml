@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<list>
+  <configuracion>
+    <ip>192.168.1.1</ip>
+    <puerto>1521</puerto>
+    <SID>myBD</SID>
+    <usuario>test</usuario>
+    <pw>test</pw>
+    <nombre>Conexion de prueba</nombre>
+  </configuracion>
+</list>
