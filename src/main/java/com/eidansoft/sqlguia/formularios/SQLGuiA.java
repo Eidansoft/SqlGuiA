@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.eidansoft.sqlguia.formularios;
 
 import com.eidansoft.sqlguia.ConfiguracionApp;
@@ -21,12 +15,16 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -56,6 +54,7 @@ public class SQLGuiA extends javax.swing.JFrame {
     private Connection conn = null;
     private String archivoConfApp = "./configuracionApp.xml";
     private Consulta consultaActual;
+    private Properties sentencias = new Properties();
     
     //Limite de resultados maximos a mostrar de una consulta
     ConfiguracionApp confApp = null;
@@ -129,6 +128,21 @@ public class SQLGuiA extends javax.swing.JFrame {
         // configuro el arbol de tablas por defecto
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("No hay conexion");
         treeTablas.setModel(new DefaultTreeModel(root));
+        
+        try {
+            //Cargo las SQLs
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream is = loader.getResourceAsStream("sqls.properties");
+            sentencias.load(is);
+        } catch (FileNotFoundException ex) {
+            String msg = "Se ha producido un error al cargar el archivo de SQLs";
+            Logger.getLogger(SQLGuiA.class.getName()).log(Level.SEVERE, msg, ex);
+            throw new RuntimeException(msg);
+        } catch (IOException ex) {
+            String msg = "Se ha producido un error al cargar el archivo de SQLs";
+            Logger.getLogger(SQLGuiA.class.getName()).log(Level.SEVERE, msg, ex);
+            throw new RuntimeException(msg);
+        }
     }
 
     /**
@@ -286,9 +300,15 @@ public class SQLGuiA extends javax.swing.JFrame {
             public void configuracionLista(ConfiguracionBD configuracionSeleccionada) {
                 confBDs = configuracionSeleccionada;
                 try {
-                    DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
-                    //conn = DriverManager.getConnection("jdbc:oracle:thin:@10.2.71.21:1521:tt025dev", "REPORTS", "REPORTS");
-                    conn = DriverManager.getConnection("jdbc:oracle:thin:@" + confBDs.getIp() + ":" + confBDs.getPuerto() + ":" + confBDs.getSID() + "", confBDs.getUsuario(), confBDs.getPw());
+                    if (confBDs.getTipo() == ConfiguracionBD.ORACLE){
+                        DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
+                        Logger.getLogger(SQLGuiA.class.getName()).log(Level.INFO, "Conectando... jdbc:oracle:thin:@" + confBDs.getIp() + ":" + confBDs.getPuerto() + ":" + confBDs.getSID());
+                        conn = DriverManager.getConnection("jdbc:oracle:thin:@" + confBDs.getIp() + ":" + confBDs.getPuerto() + ":" + confBDs.getSID() + "", confBDs.getUsuario(), confBDs.getPw());
+                    } else if (confBDs.getTipo() == ConfiguracionBD.MYSQL){
+                        DriverManager.registerDriver (new com.mysql.jdbc.Driver());
+                        Logger.getLogger(SQLGuiA.class.getName()).log(Level.INFO, "Conectando... jdbc:mysql://" + confBDs.getIp() + ":" + confBDs.getPuerto() + "/" + confBDs.getSID());
+                        conn = DriverManager.getConnection("jdbc:mysql://" + confBDs.getIp() + ":" + confBDs.getPuerto() + "/" + confBDs.getSID(), confBDs.getUsuario(), confBDs.getPw());
+                    }
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(null, "Ha ocurrido un error al conectar: " + e.getMessage());
                 }
@@ -386,7 +406,7 @@ public class SQLGuiA extends javax.swing.JFrame {
     private void muestraTablas() {
         try{
             Statement stmt = conn.createStatement();
-            String sql = "SELECT table_name FROM all_tables WHERE owner = '" + confBDs.getUsuario() + "'";
+            String sql = getSqlTodasTablas();
             log.info("Ejecutando: " + sql);
             ResultSet rset = stmt.executeQuery(sql);
             
@@ -455,8 +475,7 @@ public class SQLGuiA extends javax.swing.JFrame {
     private void cargaCamposDeTabla(Tabla t, TreePath arbol) {
         try{
             Statement stmt = conn.createStatement();
-            //SELECT * FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = 'DIM_DATE' and OWNER = ''
-            String sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '" + t.getNombre() + "' and OWNER = '" + confBDs.getUsuario() + "'";
+            String sql = getSqlTodosCampos(t);
             log.info("Ejecutando: " + sql);
             ResultSet rset = stmt.executeQuery(sql);
             
@@ -476,5 +495,29 @@ public class SQLGuiA extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "No se pudo ejecutar la SQL : " + e.getMessage());
         }
+    }
+
+    private String getSqlTodasTablas() {
+        String sql = null;
+        if (confBDs.getTipo() == ConfiguracionBD.ORACLE){
+            sql = sentencias.getProperty("oracle.sql.getTodasTablas");
+            sql = MessageFormat.format(sql, confBDs.getUsuario());
+        } else if (confBDs.getTipo() ==  ConfiguracionBD.MYSQL){
+            sql = sentencias.getProperty("mysql.sql.getTodasTablas");
+            sql = MessageFormat.format(sql, confBDs.getSID());
+        }
+        return sql;
+    }
+
+    private String getSqlTodosCampos(Tabla t) {
+        String sql = null;
+        if (confBDs.getTipo() == ConfiguracionBD.ORACLE){
+            sql = sentencias.getProperty("oracle.sql.getTodosCampos");
+            sql = MessageFormat.format(sql, t.getNombre(), confBDs.getUsuario());
+        } else if (confBDs.getTipo() ==  ConfiguracionBD.MYSQL){
+            sql = sentencias.getProperty("mysql.sql.getTodosCampos");
+            sql = MessageFormat.format(sql, confBDs.getSID(), t.getNombre());
+        }
+        return sql;
     }
 }

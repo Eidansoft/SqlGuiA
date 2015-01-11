@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.eidansoft.sqlguia.formularios;
 
 import com.eidansoft.sqlguia.ConfiguracionBD;
@@ -77,7 +71,7 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtHost = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lblEsquema = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtPort = new javax.swing.JTextField();
@@ -87,6 +81,8 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
         btnConecta = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
+        txtTipoBD = new javax.swing.JComboBox();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,23 +100,13 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
 
         jLabel1.setText("Host:");
 
-        txtHost.setText("192.168.1.1");
-
         jLabel2.setText("Puerto:");
 
-        jLabel3.setText("SID:");
+        lblEsquema.setText("Esquema:");
 
         jLabel4.setText("Usuario:");
 
         jLabel5.setText("Contraseña:");
-
-        txtPort.setText("1521");
-
-        txtSid.setText("myBD");
-
-        txtUsuario.setText("test");
-
-        txtPw.setText("test");
 
         btnConecta.setText("Conecta!");
         btnConecta.addActionListener(new java.awt.event.ActionListener() {
@@ -131,7 +117,14 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
 
         jLabel6.setText("Nombre:");
 
-        txtNombre.setText("Conexion de prueba");
+        txtTipoBD.setModel(new javax.swing.DefaultComboBoxModel(ConfiguracionBD.getAllTipos()));
+        txtTipoBD.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                txtTipoBDItemStateChanged(evt);
+            }
+        });
+
+        jLabel7.setText("Tipo:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -142,63 +135,69 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnConecta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPw, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtHost))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPort))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtSid))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtUsuario))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombre)))
+                        .addComponent(txtNombre))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtHost))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtPw, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                            .addComponent(txtPort, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTipoBD, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblEsquema)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSid)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
-                    .addComponent(txtHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtSid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(txtPw, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTipoBD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtSid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEsquema))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnConecta)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -206,13 +205,7 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConectaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectaActionPerformed
-        ConfiguracionBD conf = new ConfiguracionBD();
-        conf.setIp(txtHost.getText());
-        conf.setPuerto(txtPort.getText());
-        conf.setPw(txtPw.getText());
-        conf.setSID(txtSid.getText());
-        conf.setUsuario(txtUsuario.getText());
-        conf.setNombre(txtNombre.getText());
+        ConfiguracionBD conf = leeConfiguracion();
         
         if (!configuraciones.contains(conf)){
             // Añade y guarda
@@ -238,17 +231,22 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
                         actualizaListaConfiguraciones();
                     }
                 }
-            }
-            else if(evt.getClickCount() == 2) {
-                txtHost.setText(c.getIp());
-                txtPort.setText(c.getPuerto());
-                txtPw.setText(c.getPw());
-                txtSid.setText(c.getSID());
-                txtUsuario.setText(c.getUsuario());
-                txtNombre.setText(c.getNombre());
+            } else if(evt.getClickCount() == 2) {
+                cargaConfiguracion(c);
             }
         }
     }//GEN-LAST:event_lstConexionesPreviasMousePressed
+
+    private void txtTipoBDItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_txtTipoBDItemStateChanged
+        switch (ConfiguracionBD.String2Tipo((String) evt.getItem())) {
+            case ConfiguracionBD.MYSQL:
+                lblEsquema.setText("Esquema:");
+                break;
+            case ConfiguracionBD.ORACLE:
+                lblEsquema.setText("SID:");
+                break;
+        }
+    }//GEN-LAST:event_txtTipoBDItemStateChanged
 
     public abstract void configuracionLista(ConfiguracionBD configuracionSeleccionada);
 
@@ -256,17 +254,19 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
     private javax.swing.JButton btnConecta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblEsquema;
     private javax.swing.JList lstConexionesPrevias;
     private javax.swing.JTextField txtHost;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPort;
     private javax.swing.JTextField txtPw;
     private javax.swing.JTextField txtSid;
+    private javax.swing.JComboBox txtTipoBD;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 
@@ -291,5 +291,28 @@ public abstract class ConfiguracionesBD extends javax.swing.JFrame {
         }
         lstConexionesPrevias.setModel(listaConfiguraciones);
         lstConexionesPrevias.updateUI();
+    }
+
+    private void cargaConfiguracion(ConfiguracionBD c) {
+        txtHost.setText(c.getIp());
+        txtPort.setText(c.getPuerto());
+        txtPw.setText(c.getPw());
+        txtSid.setText(c.getSID());
+        txtUsuario.setText(c.getUsuario());
+        txtNombre.setText(c.getNombre());
+        txtTipoBD.setSelectedItem(ConfiguracionBD.Tipo2String(c.getTipo()));
+    }
+
+    private ConfiguracionBD leeConfiguracion() {
+        ConfiguracionBD conf = new ConfiguracionBD();
+        conf.setIp(txtHost.getText());
+        conf.setPuerto(txtPort.getText());
+        conf.setPw(txtPw.getText());
+        conf.setSID(txtSid.getText());
+        conf.setUsuario(txtUsuario.getText());
+        conf.setNombre(txtNombre.getText());
+        conf.setTipo(ConfiguracionBD.String2Tipo((String) txtTipoBD.getSelectedItem()));
+        
+        return conf;
     }
 }

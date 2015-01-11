@@ -14,12 +14,59 @@ import java.util.Objects;
  * @author alorente
  */
 public class ConfiguracionBD implements Serializable{
+    
+    /* Constantes */
+    public static final int MYSQL = 0;
+    public static final String MYSQL_NAME = "MySQL";
+    public static final int ORACLE = 1;
+    public static final String ORACLE_NAME = "ORACLE";
+    
     private String ip;
     private String puerto;
     private String SID;
     private String usuario;
     private String pw;
     private String nombre;
+    private int tipo;
+
+    public static int String2Tipo(String nombre) {
+        int res = -1;
+        if (nombre.equalsIgnoreCase(MYSQL_NAME)){
+            res = ConfiguracionBD.MYSQL;
+        } else if (nombre.equalsIgnoreCase(ORACLE_NAME)){
+            res = ConfiguracionBD.ORACLE;
+        } else {
+            throw new IllegalArgumentException("El tipo '" + nombre + "' no se reconoce");
+        }
+        return res;
+    }
+    
+    public static String Tipo2String(int tipo) {
+        String res = null;
+        switch (tipo) {
+            case ConfiguracionBD.MYSQL:
+                res = MYSQL_NAME;
+                break;
+            case ConfiguracionBD.ORACLE:
+                res = ORACLE_NAME;
+                break;
+            default:
+                throw new IllegalArgumentException("El tipo de BD '" + tipo + "' no es un tipo valido");
+        }
+        return res;
+    }
+    
+    public static String[] getAllTipos(){
+        return new String[] { MYSQL_NAME, ORACLE_NAME };
+    }
+    
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
 
     public String getNombre() {
         return nombre;
@@ -105,7 +152,7 @@ public class ConfiguracionBD implements Serializable{
 
     @Override
     public String toString() {
-        return nombre + " [ " + usuario + " @ " +  ip + " : " + puerto + " : " + SID.toUpperCase() + " ]";
+        return nombre + " [" + usuario + "@" +  ip + ":" + puerto + ":" + SID.toUpperCase() + "]";
     }
     
     
